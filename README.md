@@ -1,5 +1,11 @@
+# text-ui
+A text-based ui toolset and window manager
+
+Currently working on the layout mechanism: https://github.com/otsakir/text-ui/wiki/Intuitive-layout
+
 ### Dependencies
 
-text-ui depends on the lua bindings for ncurses. In my system the c binary (curses_c.so) is located under /usr/local/lib/lua/5.1 and the respective luarock under /usr/local/lib/luarocks/rocks.
+text-ui depends on the lua bindings for ncurses. It can be easily installed with a
 
-Run a `$ luarocks list` to check for lcurses for more info.
+`$ luarocks install lcurses` 
+
