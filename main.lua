@@ -9,6 +9,7 @@ remdebug.engine.start()
 
 
 local wm = require "wm"
+local ui = require "ui"
 local inspect = require "inspect"
 
 log.info('starting application')
@@ -27,6 +28,9 @@ local function main()
 
     wm.windows.main.cwin:addstr('this is another text message')
     wm.windows.main.cwin:refresh()
+
+    wm.windows.window2.cwin:addstr("hello world")
+    wm.windows.window2.cwin:refresh()
     
     -- enter the command loop
     command = 'not quit'

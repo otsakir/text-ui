@@ -1,0 +1,27 @@
+{
+	"windows": [
+		{
+			"name": "main",
+			"x0":0,
+			"y0":0,
+			"width":80,
+			"height":5,
+		        "border":true
+		}, {
+			"name": "window2",
+			"x0":0,
+			"y0":5,
+			"width":80,
+			"height":40
+		}, { 
+            "name": "comline",
+            "x0":0,
+            "y0":45,
+            "width":80,
+            "height":2,
+            "border":false,
+            "prefixPad": " $ "
+        }
+	]	
+
+}

@@ -1,3 +1,5 @@
 remdebug
 remdebug.state
 controller.lua
+*.project
+*.log
