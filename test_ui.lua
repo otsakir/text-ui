@@ -23,7 +23,7 @@ function Side_length_test()
 end
 
 function Block_test()
-  local block = ui.Block:new(2,2,5,1)
+  local block = ui.Block:new({width=5,height=1})
   assert_equal(5, block:getwidth())
   assert_equal(1, block:getheight())
   --io.write(inspect(block))
