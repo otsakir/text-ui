@@ -9,3 +9,8 @@ text-ui depends on the lua bindings for ncurses. It can be easily installed with
 
 `$ luarocks install lcurses` 
 
+### Testing
+
+Lunit test framework is used for unit testing. More on lunit can be found here:
+
+https://mroth.net/lunit
