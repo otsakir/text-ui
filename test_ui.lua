@@ -6,21 +6,8 @@ local inspect = require "inspect"
 
 module( "test_ui", lunit.testcase )
 
-function Side_new_test()
-  local side = ui.Side:new(1,1,5,1)
-  --io.write(inspect(side))
-  assert_equal(1, side.x1)
-  assert_equal(1, side.y1)
-  assert_equal(5, side.x2)
-  assert_equal(1, side.y2)
-end
+io.write("asdfasdf")
 
-function Side_length_test()
-  local side = ui.Side:new(1,1,5,1)
-  assert_equal(4, side.length)
-  side = ui.Side:new(5,1,5,10)
-  assert_equal(9, side.length)
-end
 
 function Block_test()
   local block = ui.Block:new({width=5,height=1})
@@ -29,9 +16,32 @@ function Block_test()
   --io.write(inspect(block))
 end
 
+function Area_new_test()
+  local area = ui.Area:new({width=30, height=20})
+  assert_equal(30, area.x1)
+  assert_equal(0, area.x2)
+  assert_equal(20, area.y1)
+  assert_equal(0, area.y2)
+  
+end
+
+function Area_placement_test()
+  local area = ui.Area:new({width=30, height=20})
+  local added_block = ui.Block:new({width=2, height=5})
+  assert_false(area:block_overlaps(added_block, 10, 0))
+  --io.write(inspect(area))
+  --io.write(inspect(added_block))
+  assert_false(area:block_overlaps(added_block, 10, -1))
+  --area.block_overlaps
+end
+
 function test_success()
   assert_false( false, "This test never fails.")
 end
+
+
+--Area_new_test()
+--Area_placement_test()
 
 --[[function test_failure()
   fail( "This test always fails!" )

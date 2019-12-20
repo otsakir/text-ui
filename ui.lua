@@ -11,33 +11,15 @@ end
 
 Area = {}
 
---[[
-	width
-	height
-	blocks: []
-	place(Block)
-		
-	// each placed component registers its sides to the following arrays, sorted.
-	topSides: []
-	rightSides: []
-	bottomSides: []
-	leftSides: []
-}]]
-
-
-
-function Area:new(width, height)
+-- p: {width=_, height=_}
+function Area:new(p)
     local area = {}
-    -- define limits of the area
-    area.topSide = Side:new(0,0, width, 0)
-    area.rightSide = Side:new(width,0,height, width)
-    area.bottomSide = Side:new(height, width, 0, height)
-    area.leftSide = Side:new(0, height, 0, 0)
-    -- areas keep track of all sides of contained blocks, plus their own side too. Ordered. 
-    area.topSides = {area.bottomSide}
-    area.rightSides = {area.leftSide}
-    area.bottomSides = {area.topSide}
-    area.leftSides = {area.rightSide}
+    -- limits, but of 'internal', inverse fashion. Note, is shoudl use the same interface with Blocks i.e. x1,y1,x2,y2
+    area.x1 = p.width
+    area.y1 = p.height
+    area.x2 = 0
+    area.y2 = 0;
+    area.children = {}
     
     setmetatable(area, self)
     self.__index = self
@@ -54,16 +36,33 @@ function Area:place(block, position)
 end
 
 -- is there anything already at x0 y0 ? Can the block be put there for a while ?
-function Area:spaceAvailable(block, x0,y0)
-  local topSide = block.topSide.offset(x0,y0)  -- calculate side's coords if placed inside Area at x0,y0
-  local rightSide = block.rightSide.offset(x0,y0)
-  local bottomSide = block.bottomSide.offset(x0,y0)
-  local leftSide = block.leftSide.offset(x0,y0)
-  -- we got the four sides in terms of area's coordinates. Let's see if it fits there
+function Area:block_overlaps(block, x0,y0)
+  -- calculate the new (potential) coordinates of the block inside the area
+  local new_x1 = block.x1 + x0
+  local new_y1 = block.y1 + y0
+  local new_x2 = block.x2 + x0
+  local new_y2 = block.y2 + y0
   
+  nok_blocks = {}
+  -- copy all children to nok one by one
+  --table.insert(nok_blocks, self) -- put area too. It has x1,y1,x2,y2
+  for i=1,#self.children do table.insert(nok_blocks, self.children[i]) end
+    
+  for i=1,#nok_blocks do
+    if new_x1 >= nok_blocks[i].x2 then 
+      nok_blocks[i] = nil 
+    elseif new_y1 >= nok_blocks[i].y2 then 
+      nok_blocks[i] = nil
+    elseif new_x2 <= nok_blocks[i].x1 then 
+      nok_blocks[i] = nil
+    elseif new_y2 <= nok_blocks[i].y1 then 
+      nok_blocks[i] = nil 
+    end
+  end
   
+  -- if there are any blocks left in nok_blocks, we got an overlap
+  return #nok_blocks > 0
 end
-
 
 
 --- B l o c k ---
@@ -72,16 +71,15 @@ Block = {}
 
 function Block:new(p)
 	local block = {}
-	block.topSide = Side:new( 0, 0, p.width, 0)
-	block.rightSide = Side:new( p.width, 0, p.width, p.height)
-	block.bottomSide = Side:new( p.width, p.height, 0, p.height)
-	block.leftSide = Side:new( 0, p.height, 0, 0)
+  block.x1 = 0
+  block.x2 = p.width
+  block.y1 = 0
+  block.y2 = p.height
   block.material = p.material -- fluid|rigid
   block.gravity = p.gravity
   -- block.fixed -- the block is fixed and won't fall or go anywhere
   -- block.gravity -- left|right|top|bottom|
-  
-  
+    
   setmetatable(block, self)
   self.__index = self
 
@@ -89,42 +87,16 @@ function Block:new(p)
 end
 
 function Block:getwidth() 
-  return self.topSide.length
+  return self.x2-self.x1
 end
 
 function Block:getheight()
-  return self.leftSide.length
-end
-
---- S i d e ---
-
-Side = {} 
-
-function Side:new(x1, y1, x2, y2)
-  -- TODO make sure the following points realy form a horizontal of vertical line (x1=x2 or y1=y2)
-	local side = {x1=x1, y1=y1, x2=x2, y2=y2}
-  if x1 == x2 then
-    side.length = math.abs(y2-y1)
-  else
-    side.length = math.abs(x2-x1)
-  end
-    
-  setmetatable(side, self)
-  self.__index = self
-    
-	return side
-end
-
-function Side:offset(dx,dy)
-  self.x1 = self.x1 + dx
-  self.y1 = self.y1 + dy
-  self.x2 = self.x2 + dx
-  self.y2 = self.y2 + dx
+  return self.y2-self.y1
 end
 
 
 -- public stuff
-this.Side = Side
 this.Block = Block
+this.Area = Area
 
 return this
